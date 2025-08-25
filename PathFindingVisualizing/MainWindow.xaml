@@ -5,8 +5,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PathFindingVisualizing"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        ResizeMode="CanMinimize"
+        WindowStartupLocation="CenterScreen"
+        Title="MainWindow" Height="900" Width="1200">
     <Grid>
-        <UniformGrid x:Name="MapView" Rows="42" Columns="42"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="7*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        
+        <Border Grid.Column="0" Margin="14 9" BorderBrush="Black" BorderThickness="2">
+            <UniformGrid x:Name="MapView"  Rows="42" Columns="42" UseLayoutRounding="True" />
+        </Border>
+
+        <StackPanel Grid.Column="1" Margin="5" Orientation="Vertical">
+            <TextBlock Text="Info do Caminho" FontSize="40" FontWeight="Bold" Margin="0 0 0 10"/>
+            <Button Content="Iniciar" FontSize="28" Width="100" VerticalAlignment="Bottom"/>
+        </StackPanel>
     </Grid>
 </Window>

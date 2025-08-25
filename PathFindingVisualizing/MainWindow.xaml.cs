@@ -20,6 +20,22 @@ namespace PathFindingVisualizing {
 	public partial class MainWindow : Window {
 		public MainWindow() {
 			InitializeComponent();
+
+			Border[,] gridUI = new Border[42,42]; 
+			for(int i = 0; i < 42; i++) {
+				for(int j = 0; j < 42; j++) {
+					var rect = new Border {
+						Width = 29,
+						Height = 29,
+						Background = Brushes.LightGray,
+						BorderBrush = Brushes.Black,
+						BorderThickness = new Thickness(1)
+					};
+
+					gridUI[i, j] = rect;
+					MapView.Children.Add(rect);
+				}
+			}
 		}
 	}
 }
