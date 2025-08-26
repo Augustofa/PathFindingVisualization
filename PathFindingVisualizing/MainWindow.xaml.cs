@@ -37,7 +37,12 @@ namespace PathFindingVisualizing {
 				}
 			}
 
-			GridMapping gridMapping = new GridMapping(gridUI);
+			GridMapper gridMapping = new GridMapper(gridUI);
+		}
+
+		private void StartClick(object sender, RoutedEventArgs e) {
+			double bestTime = new BattlePlanner().PlanBattles();
+			battleTimeTxt.Text = bestTime.ToString("0.00");
 		}
 	}
 }

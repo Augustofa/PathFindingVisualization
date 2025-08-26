@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PathFindingVisualizing {
     static internal class MapLoader {
-        static string mapPath = "C:\\Users\\augus\\source\\repos\\Augustofa\\PathFindingVisualization\\PathFindingVisualizing\\map.txt";
+        static string mapPath = "E:\\Projetos Visual Studio\\PathFindingVisualizing\\PathFindingVisualizing\\map.txt";
 
         public static int[,] LoadMap() {
             string[] lines = File.ReadAllLines(mapPath);
