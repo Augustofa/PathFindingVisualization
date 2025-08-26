@@ -36,6 +36,8 @@ namespace PathFindingVisualizing {
 					MapView.Children.Add(rect);
 				}
 			}
+
+			GridMapping gridMapping = new GridMapping(gridUI);
 		}
 	}
 }

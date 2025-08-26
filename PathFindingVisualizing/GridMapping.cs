@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Text;
@@ -18,14 +19,15 @@ namespace PathFindingVisualizing {
 			{ 1, Brushes.LightGray },
 			{ 5, Brushes.Gray }
 		};
-
-		public int[,] grid;
+		public int[,] grid = MapLoader.LoadMap();
 		public Border[,] gridUI;
 
 		public GridMapping(Border[,] gridUI) {
 			for(int i = 0; i < 42; i++) {
 				for(int j = 0; j < 42; j++) {
-
+					if(!terrainColors.ContainsKey(grid[i, j])) continue;
+					
+					gridUI[i, j].Background = terrainColors[grid[i, j]];
 				}
 			}
 		}
