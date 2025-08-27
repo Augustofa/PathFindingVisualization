@@ -18,6 +18,11 @@ namespace PathFindingVisualizing {
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
 	public partial class MainWindow : Window {
+		GridMapper gridMapper;
+		BattlePlanner battlePlanner;
+		PathPlanner pathPlanner;
+		char[,] grid;
+
 		public MainWindow() {
 			InitializeComponent();
 
@@ -37,12 +42,20 @@ namespace PathFindingVisualizing {
 				}
 			}
 
-			GridMapper gridMapping = new GridMapper(gridUI);
+			grid = MapLoader.LoadMap();
+			gridMapper = new GridMapper(gridUI, grid);
 		}
 
 		private void StartClick(object sender, RoutedEventArgs e) {
-			double bestTime = new BattlePlanner().PlanBattles();
+			battlePlanner = new BattlePlanner();
+			double bestTime = battlePlanner.PlanBattles();
 			battleTimeTxt.Text = bestTime.ToString("0.00");
+
+			double[] battleTimes = battlePlanner.GetBattleTimes();
+			int[,] weightGrid = gridMapper.ConvertToWeightMap(grid, battleTimes);
+			Tuple<Position, Position> startAndEndPos = gridMapper.GetStartAndGoalPosition(grid);
+
+			pathPlanner = new PathPlanner(weightGrid, startAndEndPos);
 		}
 	}
 }

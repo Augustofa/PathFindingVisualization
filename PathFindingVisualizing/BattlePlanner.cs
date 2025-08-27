@@ -11,13 +11,15 @@ namespace PathFindingVisualizing {
 		public int[] battles = { 50, 55, 60, 70, 75, 80, 85, 90, 95, 100, 110, 120 };
 		public double[] powers = { 1.5, 1.4, 1.3, 1.2, 1.1 };
 
+		Dictionary<int, int> path;
+
 		public double PlanBattles() {
 			int[] lives = Enumerable.Repeat(5, 5).ToArray();
 			Dictionary<int, double> memory = new Dictionary<int, double>();
-			Dictionary<int, int> path = new Dictionary<int, int>();
+			path = new Dictionary<int, int>();
 
 			double bestTime = PlanNextBattle(0, lives, memory, path);
-			PrintSolution(path);
+			PrintSolution();
 
 			return bestTime;
 		}
@@ -85,7 +87,7 @@ namespace PathFindingVisualizing {
 			return battles[battle] / powerSum;
 		}
 
-		private List<List<int>> PrintSolution(Dictionary<int, int> path) {
+		private List<List<int>> PrintSolution() {
 			List<List<int>> solution = new List<List<int>>();
 			int[] remainingLives = Enumerable.Repeat(5, 5).ToArray();
 			int battle = 0;
@@ -106,6 +108,29 @@ namespace PathFindingVisualizing {
 			}
 
 			return solution;
+		}
+
+		public double[] GetBattleTimes() {
+			double[] battleTimes = new double[12];
+			int[] remainingLives = Enumerable.Repeat(5, 5).ToArray();
+			int battle = 0;
+
+			while(battle < 12) {
+				int state = EncodeState(battle, remainingLives);
+				int mask = path[state];
+				List<int> team = new List<int>();
+				for(int k = 0; k < powers.Length; k++) {
+					if((mask & (1 << k)) != 0) {
+						team.Add(k);
+						remainingLives[k]--;
+					}
+				}
+				battleTimes[battle] = CalcBattleTime(battle, mask);
+				battle++;
+			}
+			Debug.Print(string.Join(",", battleTimes));
+
+			return battleTimes;
 		}
 	}
 }
