@@ -24,9 +24,23 @@
         <StackPanel Grid.Column="1" Margin="5" Orientation="Vertical">
             <TextBlock Text="Info do Caminho" FontSize="40" FontWeight="Bold" Margin="0 0 0 10" TextAlignment="Center"/>
             <Button Content="Iniciar" FontSize="28" Width="100" Margin="20" VerticalAlignment="Bottom" Click="StartClick"/>
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" Margin="10 0">
                 <Label FontSize="28" FontWeight="DemiBold">Tempo de Batalha:</Label>
                 <TextBlock Name="battleTimeTxt" FontSize="28" VerticalAlignment="Center" Margin="3">0</TextBlock>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="10 0">
+                <Label FontSize="28" FontWeight="DemiBold">Melhor Caminho:</Label>
+                <TextBlock Name="bestTimeTxt" FontSize="28" VerticalAlignment="Center" Margin="3">0</TextBlock>
+            </StackPanel>
+            <StackPanel Name="resultsPanel" Orientation="Vertical" Visibility="Hidden">
+                <Line Stretch="Fill" Stroke="Black" X2="1" Margin="5 20"/>
+                <TextBlock Text="Resultados" FontSize="32" FontWeight="Bold" Margin="0 0 0 10" TextAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" Margin="10 " HorizontalAlignment="Center">
+                    <Label FontSize="28" FontWeight="DemiBold">Tempo:</Label>
+                    <TextBlock Name="currentTimeTxt" FontSize="28" VerticalAlignment="Center" Margin="3">0</TextBlock>
+                </StackPanel>
+                <Button Name="nextStepBtn" Content="Próx. Passo" FontSize="28" Width="150" Margin="5" VerticalAlignment="Bottom" Click="NextStepClick"/>
+                <Button Name="viewPathBtn" Content="Ver Completo" FontSize="28" Width="200" Margin="10" VerticalAlignment="Bottom" Click="ViewPathClick"/>
             </StackPanel>
         </StackPanel>
     </Grid>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +23,7 @@ namespace PathFindingVisualizing {
 		BattlePlanner battlePlanner;
 		PathPlanner pathPlanner;
 		char[,] grid;
+		List<Node> bestPath;
 
 		public MainWindow() {
 			InitializeComponent();
@@ -48,14 +50,29 @@ namespace PathFindingVisualizing {
 
 		private void StartClick(object sender, RoutedEventArgs e) {
 			battlePlanner = new BattlePlanner();
-			double bestTime = battlePlanner.PlanBattles();
-			battleTimeTxt.Text = bestTime.ToString("0.00");
+			double battleTime = battlePlanner.PlanBattles();
+			battleTimeTxt.Text = battleTime.ToString("0");
 
 			double[] battleTimes = battlePlanner.GetBattleTimes();
 			int[,] weightGrid = gridMapper.ConvertToWeightMap(grid, battleTimes);
 			Tuple<Position, Position> startAndEndPos = gridMapper.GetStartAndGoalPosition(grid);
 
-			pathPlanner = new PathPlanner(weightGrid, startAndEndPos);
+			pathPlanner = new PathPlanner(weightGrid, gridMapper.battles, startAndEndPos);
+			bestPath = pathPlanner.FindBestPath();
+			int bestTime = pathPlanner.GetPathTime();
+			bestTimeTxt.Text = bestTime.ToString();
+
+			resultsPanel.Visibility = Visibility.Visible;
+		}
+
+		private void ViewPathClick(object sender, RoutedEventArgs e) {
+			gridMapper.DrawPath(bestPath);
+			currentTimeTxt.Text = bestTimeTxt.Text;
+		}
+
+		private void NextStepClick(object sender, RoutedEventArgs e) {
+			int currentTime = gridMapper.DrawStep(bestPath);
+			currentTimeTxt.Text = currentTime.ToString();
 		}
 	}
 }
