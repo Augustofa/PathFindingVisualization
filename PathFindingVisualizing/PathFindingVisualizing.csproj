@@ -101,5 +101,8 @@
   <ItemGroup>
     <Resource Include="map.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\play.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

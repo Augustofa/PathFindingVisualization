@@ -10,6 +10,7 @@ using System.Windows.Media;
 
 namespace PathFindingVisualizing {
 	internal class GridMapper {
+		char[,] originalGrid;
 		public Border[,] gridUI;
 		public int[,] battles;
 
@@ -33,6 +34,7 @@ namespace PathFindingVisualizing {
 
 		public GridMapper(Border[,] gridUI, char[,] grid) {
 			this.gridUI = gridUI;
+			this.originalGrid = grid;
 			DrawGrid(grid);
 		}
 
@@ -97,7 +99,10 @@ namespace PathFindingVisualizing {
 			return node.g;
 		}
 
-
+		public void ResetPath() {
+			currentStep = 0;
+			DrawGrid(originalGrid);
+		}
 	}
 
 	public class Position {

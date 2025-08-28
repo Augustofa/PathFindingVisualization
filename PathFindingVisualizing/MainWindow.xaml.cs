@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -63,9 +64,11 @@ namespace PathFindingVisualizing {
 			bestTimeTxt.Text = bestTime.ToString();
 
 			resultsPanel.Visibility = Visibility.Visible;
+			ResetPath();
 		}
 
 		private void ViewPathClick(object sender, RoutedEventArgs e) {
+			ResetPath();
 			gridMapper.DrawPath(bestPath);
 			currentTimeTxt.Text = bestTimeTxt.Text;
 		}
@@ -74,5 +77,32 @@ namespace PathFindingVisualizing {
 			int currentTime = gridMapper.DrawStep(bestPath);
 			currentTimeTxt.Text = currentTime.ToString();
 		}
-	}
+
+        private void PlayStepsClick(object sender, RoutedEventArgs e) {
+			ResetPath();
+
+			ToggleButtons(false);
+			PlayStepsAsync();
+        }
+
+		private async Task PlayStepsAsync() {
+            for(int i = 0; i < bestPath.Count; i++) {
+                NextStepClick(null, null);
+				await Task.Delay(100);
+            }
+			ToggleButtons(true);
+        }
+
+		private void ToggleButtons(bool state) {
+            startBtn.IsEnabled = state;
+            nextStepBtn.IsEnabled = state;
+            playStepsBtn.IsEnabled = state;
+            viewPathBtn.IsEnabled = state;
+        }
+
+		private void ResetPath() {
+			gridMapper.ResetPath();
+			currentTimeTxt.Text = "0";
+		}
+    }
 }
