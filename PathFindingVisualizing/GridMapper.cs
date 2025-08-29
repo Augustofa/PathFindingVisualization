@@ -48,6 +48,10 @@ namespace PathFindingVisualizing {
 			}
 		}
 
+		public void DrawPosition(int row, int col, char terrain) {
+			gridUI[row, col].Background = terrainColors[terrain];
+		}
+
 		public Tuple<Position, Position> GetStartAndGoalPosition(char[,] grid) {
 			Position start = new Position();
 			Position goal = new Position();
@@ -90,10 +94,14 @@ namespace PathFindingVisualizing {
 			foreach(Node node in path) {
 				gridUI[node.row, node.col].Background = Brushes.Blue;
 			}
+			currentStep = path.Count;
 		}
 
 		private int currentStep = 0;
 		public int DrawStep(List<Node> path) {
+			if(currentStep >= path.Count) {
+				ResetPath();
+			} 
 			Node node = path[currentStep++];
 			gridUI[node.row, node.col].Background = Brushes.Blue;
 			return node.g;

@@ -21,8 +21,9 @@
             <UniformGrid x:Name="MapView"  Rows="42" Columns="42" UseLayoutRounding="True" />
         </Border>
 
-        <StackPanel Grid.Column="1" Margin="5" Orientation="Vertical">
+        <StackPanel Name="infoStack" Grid.Column="1" Margin="5" Orientation="Vertical" Visibility="Visible">
             <TextBlock Text="Info do Caminho" FontSize="40" FontWeight="Bold" Margin="0 0 0 10" TextAlignment="Center"/>
+            <Button Name="customMapBtn" Content="Personalizar Mapa" FontSize="28" Width="250" Margin="0 20 0 0 " VerticalAlignment="Bottom" Click="CustomMapClick"/>
             <Button Name="startBtn" Content="Iniciar" FontSize="28" Width="100" Margin="20" VerticalAlignment="Bottom" Click="StartClick"/>
             <StackPanel Orientation="Horizontal" Margin="10 0">
                 <Label FontSize="28" FontWeight="DemiBold">Tempo de Batalha:</Label>
@@ -32,7 +33,7 @@
                 <Label FontSize="28" FontWeight="DemiBold">Melhor Caminho:</Label>
                 <TextBlock Name="bestTimeTxt" FontSize="28" VerticalAlignment="Center" Margin="3">0</TextBlock>
             </StackPanel>
-            <StackPanel Name="resultsPanel" Orientation="Vertical" Visibility="Visible">
+            <StackPanel Name="resultsPanel" Orientation="Vertical" Visibility="Hidden">
                 <Line Stretch="Fill" Stroke="Black" X2="1" Margin="5 20"/>
                 <TextBlock Text="Resultados" FontSize="32" FontWeight="Bold" Margin="0 0 0 10" TextAlignment="Center"/>
                 <StackPanel Orientation="Horizontal" Margin="10 " HorizontalAlignment="Center">
@@ -41,7 +42,7 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button Name="nextStepBtn" Content="Próx. Passo" FontSize="28" Width="150" Margin="5" VerticalAlignment="Bottom" Click="NextStepClick"/>
+                    <RepeatButton Name="nextStepBtn" Content="Próx. Passo" FontSize="28" Width="150" Margin="5" VerticalAlignment="Bottom" Delay="500" Interval="20" Click="NextStepClick"/>
                     <Button Name="playStepsBtn" FontSize="28" Height="40" Padding="5"  Margin="5" VerticalAlignment="Bottom" Click="PlayStepsClick">
                         <Image Source="pack://application:,,,/Images/play.png"/>
                     </Button>
@@ -49,6 +50,17 @@
                 </StackPanel>
                 <Button Name="viewPathBtn" Content="Ver Completo" FontSize="28" Width="200" Margin="10" VerticalAlignment="Bottom" Click="ViewPathClick"/>
             </StackPanel>
+            
+        </StackPanel>
+        <StackPanel Name="customMapStack" Visibility="Hidden" Grid.Column="1" Margin="5" Orientation="Vertical">
+            <TextBlock Text="Paleta de Cores" FontSize="38" FontWeight="Bold" Margin="0 20 0 10" TextAlignment="Center"/>
+            <UniformGrid Rows="2" Columns="3" Margin="10" HorizontalAlignment="Center">
+                <Button Background="SaddleBrown" Tag="M" Width="50" Height="50" Margin="5"  Click="PaletteColorClick"/>
+                <Button Background="LightGray" Tag="P" Width="50" Height="50" Margin="5"  Click="PaletteColorClick"/>
+                <Button Background="Gray" Tag="R" Width="50" Height="50" Margin="5"  Click="PaletteColorClick"/>
+            </UniformGrid>
+            
+            <Button Name="confirmCustomMapBtn" Content="Confirmar" FontSize="28" Width="150" Margin="10" VerticalAlignment="Bottom" Click="ConfirmCustomMapClick"/>
         </StackPanel>
     </Grid>
 </Window>
