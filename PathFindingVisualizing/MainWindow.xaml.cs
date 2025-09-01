@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -33,10 +34,12 @@ namespace PathFindingVisualizing {
 					};
 
 					gridUI[i, j] = rect;
-					rect.MouseLeftButtonDown += PaintSquareClick;
+					rect.MouseLeftButtonDown += StartPaintingSquares;
+					rect.MouseEnter += PaintSquareHover;
 					MapView.Children.Add(rect);
 				}
 			}
+			MouseUp += StopPaintingSquares;
 
 			grid = MapLoader.LoadMap();
 			gridMapper = new GridMapper(gridUI, grid);
@@ -47,15 +50,21 @@ namespace PathFindingVisualizing {
 			double battleTime = battlePlanner.PlanBattles();
 			battleTimeTxt.Text = battleTime.ToString("0");
 
+			var stopwatch = Stopwatch.StartNew();
 			double[] battleTimes = battlePlanner.GetBattleTimes();
+			long totalTime = stopwatch.ElapsedMilliseconds;
 			int[,] weightGrid = gridMapper.ConvertToWeightMap(grid, battleTimes);
 			Tuple<Position, Position> startAndEndPos = gridMapper.GetStartAndGoalPosition(grid);
 
 			pathPlanner = new PathPlanner(weightGrid, gridMapper.battles, startAndEndPos);
+			stopwatch = Stopwatch.StartNew();
 			bestPath = pathPlanner.FindBestPath();
+			totalTime += stopwatch.ElapsedMilliseconds;
 			int bestTime = pathPlanner.GetPathTime();
 			bestTimeTxt.Text = bestTime.ToString();
 
+			Double calcTime = totalTime / 1000.0;
+			calculationTime.Text = calcTime.ToString("0.000") + "s";
 			resultsPanel.Visibility = Visibility.Visible;
 			ResetPath();
 		}
@@ -71,26 +80,39 @@ namespace PathFindingVisualizing {
 			currentTimeTxt.Text = currentTime.ToString();
 		}
 
+		private bool pauseSteps = false;
         private void PlayStepsClick(object sender, RoutedEventArgs e) {
 			ResetPath();
 
 			ToggleButtons(false);
 			PlayStepsAsync();
+			playStepsBtn.Visibility = Visibility.Collapsed;
+			pauseStepsBtn.Visibility = Visibility.Visible;
         }
 
 		private async Task PlayStepsAsync() {
             for(int i = 0; i < bestPath.Count; i++) {
+				if(pauseSteps) break;
                 NextStepClick(null, null);
-				await Task.Delay(100);
+				await Task.Delay(20);
             }
-			ToggleButtons(true);
+			pauseSteps = false;
+            pauseStepsBtn.Visibility = Visibility.Collapsed;
+            playStepsBtn.Visibility = Visibility.Visible;
+            ToggleButtons(true);
+        }
+
+		private void PauseStepsClick(object sender, RoutedEventArgs e) {
+			pauseSteps = true;
+            pauseStepsBtn.Visibility = Visibility.Collapsed;
+            playStepsBtn.Visibility = Visibility.Visible;
+            return;
         }
 
 		private void ToggleButtons(bool state) {
 			customMapBtn.IsEnabled = state;
             startBtn.IsEnabled = state;
             nextStepBtn.IsEnabled = state;
-            playStepsBtn.IsEnabled = state;
             viewPathBtn.IsEnabled = state;
         }
 
@@ -100,6 +122,7 @@ namespace PathFindingVisualizing {
 		}
 
 		private void CustomMapClick(object sender, RoutedEventArgs e) {
+			ResetPath();
 			infoStack.Visibility = Visibility.Hidden;
 			customMapStack.Visibility = Visibility.Visible;
 		}
@@ -110,15 +133,31 @@ namespace PathFindingVisualizing {
 		}
 
 		private char selectedTerrain = 'R';
-		private void PaintSquareClick(object sender, RoutedEventArgs e) {
+		private bool paintingTerrain = false;
+		private void StartPaintingSquares(object sender, RoutedEventArgs e) {
+			paintingTerrain = true;
+			PaintSquareHover(sender, e);
+		}
+
+		private void PaintSquareHover(object sender, RoutedEventArgs e) {
+			if(!paintingTerrain) return;
 			var border = sender as Border;
 			if(border?.Tag is Tuple<int,int> pos) {
 				int row = pos.Item1;
 				int col = pos.Item2;
 
+				if(gridMapper.IsSpecialTerrain(grid[row, col])) {
+					paintingTerrain = false;
+					MessageBox.Show("Posição especial, não foi possível trocar");
+					return;
+				};
 				grid[row, col] = selectedTerrain;
 				gridMapper.DrawPosition(row, col, selectedTerrain);
 			}
+		}
+
+		private void StopPaintingSquares(object sender, RoutedEventArgs e) {
+			paintingTerrain = false;
 		}
 
 		private void PaletteColorClick(object sender, RoutedEventArgs e) {

@@ -107,11 +107,23 @@ namespace PathFindingVisualizing {
 		}
 
 		private int Heuristic(int row, int col) {
-			return Math.Abs(goal.row - row) + Math.Abs(goal.col - col);
+			return GoalHeuristic(row, col);
 		}
 
+		private int WaypointHeuristic(int row, int col) {
+			int bestDist = int.MaxValue;
+			for(int i = 0; i < 12; i++) {
+				bestDist = Math.Min(bestDist, Math.Abs(waypoints[i,0] - row) + Math.Abs(waypoints[i,1] - col));
+			}
+			return bestDist;
+		}
 
-		private static readonly (int dr, int dc)[] Directions = new (int, int)[] {
+        private int GoalHeuristic(int row, int col) {
+            return Math.Abs(goal.row - row) + Math.Abs(goal.col - col);
+        }
+
+
+        private static readonly (int dr, int dc)[] Directions = new (int, int)[] {
 			(0, 1), 
 			(0, -1),
 			(1, 0), 

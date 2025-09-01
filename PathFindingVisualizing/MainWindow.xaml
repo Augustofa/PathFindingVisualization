@@ -33,6 +33,10 @@
                 <Label FontSize="28" FontWeight="DemiBold">Melhor Caminho:</Label>
                 <TextBlock Name="bestTimeTxt" FontSize="28" VerticalAlignment="Center" Margin="3">0</TextBlock>
             </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="10 0">
+                <Label FontSize="28" FontWeight="DemiBold">Performance:</Label>
+                <TextBlock Name="calculationTime" FontSize="28" VerticalAlignment="Center" Margin="3">0</TextBlock>
+            </StackPanel>
             <StackPanel Name="resultsPanel" Orientation="Vertical" Visibility="Hidden">
                 <Line Stretch="Fill" Stroke="Black" X2="1" Margin="5 20"/>
                 <TextBlock Text="Resultados" FontSize="32" FontWeight="Bold" Margin="0 0 0 10" TextAlignment="Center"/>
@@ -44,7 +48,11 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <RepeatButton Name="nextStepBtn" Content="Próx. Passo" FontSize="28" Width="150" Margin="5" VerticalAlignment="Bottom" Delay="500" Interval="20" Click="NextStepClick"/>
                     <Button Name="playStepsBtn" FontSize="28" Height="40" Padding="5"  Margin="5" VerticalAlignment="Bottom" Click="PlayStepsClick">
-                        <Image Source="pack://application:,,,/Images/play.png"/>
+                        <Image Source="/Images/play.png"/>
+                    </Button>
+
+                    <Button Name="pauseStepsBtn" FontSize="28" Height="40" Padding="5"  Margin="5" VerticalAlignment="Bottom" Click="PauseStepsClick" Visibility="Collapsed">
+                        <Image Source="/Images/pause.png"/>
                     </Button>
 
                 </StackPanel>

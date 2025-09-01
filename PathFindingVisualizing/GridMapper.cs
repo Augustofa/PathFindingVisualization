@@ -97,19 +97,29 @@ namespace PathFindingVisualizing {
 			currentStep = path.Count;
 		}
 
+		private Node pastNode = null;
 		private int currentStep = 0;
 		public int DrawStep(List<Node> path) {
 			if(currentStep >= path.Count) {
 				ResetPath();
 			} 
 			Node node = path[currentStep++];
-			gridUI[node.row, node.col].Background = Brushes.Blue;
+			if(pastNode != null) {
+                gridUI[pastNode.row, pastNode.col].Background = Brushes.Blue;
+            }
+			pastNode = node;
+			gridUI[node.row, node.col].Background = Brushes.Yellow;
 			return node.g;
 		}
 
 		public void ResetPath() {
 			currentStep = 0;
+			pastNode = null;
 			DrawGrid(originalGrid);
+		}
+
+		public bool IsSpecialTerrain(char terrain) {
+			return "BSG".Contains(terrain);
 		}
 	}
 
