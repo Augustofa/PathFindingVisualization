@@ -22,24 +22,33 @@
         </Border>
 
         <StackPanel Name="infoStack" Grid.Column="1" Margin="5" Orientation="Vertical" Visibility="Visible">
-            <TextBlock Text="Info do Caminho" FontSize="40" FontWeight="Bold" Margin="0 0 0 10" TextAlignment="Center"/>
+            <TextBlock Text="Informações" FontSize="40" FontWeight="Bold" Margin="0 5 0 0" TextAlignment="Center"/>
             <Button Name="customMapBtn" Content="Personalizar Mapa" FontSize="28" Width="250" Margin="0 20 0 0 " VerticalAlignment="Bottom" Click="CustomMapClick"/>
             <Button Name="startBtn" Content="Iniciar" FontSize="28" Width="100" Margin="20" VerticalAlignment="Bottom" Click="StartClick"/>
-            <StackPanel Orientation="Horizontal" Margin="10 0">
-                <Label FontSize="28" FontWeight="DemiBold">Tempo de Batalha:</Label>
-                <TextBlock Name="battleTimeTxt" FontSize="28" VerticalAlignment="Center" Margin="3">0</TextBlock>
+            <StackPanel Name="searchPanel" Orientation="Vertical" Visibility="Visible">
+                <Line Stretch="Fill" Stroke="Black" X2="1" Margin="5 10"/>
+                <TextBlock Text="Dados da Busca" FontSize="32" FontWeight="Bold" Margin="5" TextAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" Margin="10 0">
+                    <Label FontSize="28" FontWeight="DemiBold">Tempo de Batalha:</Label>
+                    <TextBlock Name="battleTimeTxt" FontSize="28" VerticalAlignment="Center" Margin="3">0</TextBlock>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="10 0">
+                    <Label FontSize="28" FontWeight="DemiBold">Melhor Caminho:</Label>
+                    <TextBlock Name="bestTimeTxt" FontSize="28" VerticalAlignment="Center" Margin="3">0</TextBlock>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="10 0">
+                    <Label FontSize="28" FontWeight="DemiBold">Performance:</Label>
+                    <TextBlock Name="calculationTime" FontSize="28" VerticalAlignment="Center" Margin="3">0</TextBlock>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Name="playSearchBtn" Content="Ver Busca" FontSize="28" Padding="5"  Margin="5" VerticalAlignment="Bottom" Click="PlaySearchClick"/>
+
+                    <Button Name="pauseSearchBtn" Content="Pausar Busca" FontSize="28" Padding="5"  Margin="5" VerticalAlignment="Bottom" Click="PauseStepsClick" Visibility="Collapsed"/>
+                </StackPanel>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="10 0">
-                <Label FontSize="28" FontWeight="DemiBold">Melhor Caminho:</Label>
-                <TextBlock Name="bestTimeTxt" FontSize="28" VerticalAlignment="Center" Margin="3">0</TextBlock>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="10 0">
-                <Label FontSize="28" FontWeight="DemiBold">Performance:</Label>
-                <TextBlock Name="calculationTime" FontSize="28" VerticalAlignment="Center" Margin="3">0</TextBlock>
-            </StackPanel>
-            <StackPanel Name="resultsPanel" Orientation="Vertical" Visibility="Hidden">
+            <StackPanel Name="resultsPanel" Orientation="Vertical" Visibility="Visible">
                 <Line Stretch="Fill" Stroke="Black" X2="1" Margin="5 20"/>
-                <TextBlock Text="Resultados" FontSize="32" FontWeight="Bold" Margin="0 0 0 10" TextAlignment="Center"/>
+                <TextBlock Text="Melhor Caminho" FontSize="32" FontWeight="Bold" TextAlignment="Center"/>
                 <StackPanel Orientation="Horizontal" Margin="10 " HorizontalAlignment="Center">
                     <Label FontSize="28" FontWeight="DemiBold">Tempo:</Label>
                     <TextBlock Name="currentTimeTxt" FontSize="28" VerticalAlignment="Center" Margin="3">0</TextBlock>

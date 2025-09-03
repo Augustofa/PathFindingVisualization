@@ -65,6 +65,7 @@ namespace PathFindingVisualizing {
 
 			Double calcTime = totalTime / 1000.0;
 			calculationTime.Text = calcTime.ToString("0.000") + "s";
+			searchPanel.Visibility = Visibility.Visible;
 			resultsPanel.Visibility = Visibility.Visible;
 			ResetPath();
 		}
@@ -76,7 +77,7 @@ namespace PathFindingVisualizing {
 		}
 
 		private void NextStepClick(object sender, RoutedEventArgs e) {
-			int currentTime = gridMapper.DrawStep(bestPath);
+			int currentTime = gridMapper.DrawStep(bestPath, Brushes.Blue);
 			currentTimeTxt.Text = currentTime.ToString();
 		}
 
@@ -97,19 +98,51 @@ namespace PathFindingVisualizing {
 				await Task.Delay(20);
             }
 			pauseSteps = false;
-            pauseStepsBtn.Visibility = Visibility.Collapsed;
             playStepsBtn.Visibility = Visibility.Visible;
+            pauseStepsBtn.Visibility = Visibility.Collapsed;
             ToggleButtons(true);
         }
 
 		private void PauseStepsClick(object sender, RoutedEventArgs e) {
 			pauseSteps = true;
-            pauseStepsBtn.Visibility = Visibility.Collapsed;
             playStepsBtn.Visibility = Visibility.Visible;
+            pauseStepsBtn.Visibility = Visibility.Collapsed;
             return;
         }
 
+		private void PlaySearchClick(object sender, RoutedEventArgs e) {
+			ResetPath();
+
+			ToggleButtons(false);
+			pathPlanner.RemoveRepeatsFromSearch();
+			playSearchBtn.Visibility = Visibility.Collapsed;
+			pauseSearchBtn.Visibility = Visibility.Visible;
+			PlaySearchAsync(pathPlanner.searchPath);
+		}
+
+		private async Task PlaySearchAsync(List<Node> searchPath) {
+			playStepsBtn.IsEnabled = false;
+			for(int i = 0; i < searchPath.Count; i++) {
+				if(pauseSteps) break;
+				gridMapper.DrawStep(searchPath, Brushes.Red);
+				await Task.Delay(1);
+			}
+			pauseSteps = false;
+			playSearchBtn.Visibility = Visibility.Visible;
+			pauseSearchBtn.Visibility = Visibility.Collapsed;
+			playStepsBtn.IsEnabled = true;
+			ToggleButtons(true);
+		}
+
+		private void PauseSearchClick(object sender, RoutedEventArgs e) {
+			pauseSteps = true;
+			playSearchBtn.Visibility = Visibility.Visible;
+			pauseSearchBtn.Visibility = Visibility.Collapsed;
+			return;
+		}
+
 		private void ToggleButtons(bool state) {
+			playSearchBtn.IsEnabled = state;
 			customMapBtn.IsEnabled = state;
             startBtn.IsEnabled = state;
             nextStepBtn.IsEnabled = state;

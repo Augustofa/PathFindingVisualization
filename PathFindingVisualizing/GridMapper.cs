@@ -99,13 +99,13 @@ namespace PathFindingVisualizing {
 
 		private Node pastNode = null;
 		private int currentStep = 0;
-		public int DrawStep(List<Node> path) {
+		public int DrawStep(List<Node> path, Brush color) {
 			if(currentStep >= path.Count) {
 				ResetPath();
 			} 
 			Node node = path[currentStep++];
 			if(pastNode != null) {
-                gridUI[pastNode.row, pastNode.col].Background = Brushes.Blue;
+                gridUI[pastNode.row, pastNode.col].Background = color;
             }
 			pastNode = node;
 			gridUI[node.row, node.col].Background = Brushes.Yellow;

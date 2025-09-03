@@ -12,6 +12,7 @@ namespace PathFindingVisualizing {
 		Node start, goal;
 
 		public List<Node> bestPath;
+		public List<Node> searchPath = new List<Node>();
 
 		public PathPlanner(int[,] grid, int[,] waypoints, Tuple<Position, Position> startAndGoalPos) {
 			this.grid = grid;
@@ -44,6 +45,7 @@ namespace PathFindingVisualizing {
 				if(!visitedNodes.Add(current)) {
 					continue;
 				}
+				searchPath.Add(current);
 
 				var currentNeighbors = GetNeighbors(current);
 				foreach(var neighbor in currentNeighbors) {
@@ -100,9 +102,6 @@ namespace PathFindingVisualizing {
 
 		public int GetPathTime() {
 			if(bestPath == null) return int.MaxValue;
-			//foreach(var node in bestPath) {
-			//	Console.WriteLine(node.row + " " + node.col);
-			//}
 			return bestPath[bestPath.Count - 1].g;
 		}
 
@@ -122,6 +121,18 @@ namespace PathFindingVisualizing {
             return Math.Abs(goal.row - row) + Math.Abs(goal.col - col);
         }
 
+		HashSet<Tuple<int, int>> searchedPos = new HashSet<Tuple<int, int>>();
+		public void RemoveRepeatsFromSearch() {
+			if(searchedPos.Count > 0) return;
+			for(int i = 0; i < searchPath.Count; i++) {
+				var pos = new Tuple<int,int>(searchPath[i].row, searchPath[i].col);
+				if(searchedPos.Contains(pos)) { 
+					searchPath.RemoveAt(i);
+					i--;
+				}
+				searchedPos.Add(pos);
+			}
+		}
 
         private static readonly (int dr, int dc)[] Directions = new (int, int)[] {
 			(0, 1), 
