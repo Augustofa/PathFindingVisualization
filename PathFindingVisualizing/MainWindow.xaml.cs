@@ -114,7 +114,7 @@ namespace PathFindingVisualizing {
 			ResetPath();
 
 			ToggleButtons(false);
-			pathPlanner.RemoveRepeatsFromSearch();
+			// pathPlanner.RemoveRepeatsFromSearch();
 			playSearchBtn.Visibility = Visibility.Collapsed;
 			pauseSearchBtn.Visibility = Visibility.Visible;
 			PlaySearchAsync(pathPlanner.searchPath);

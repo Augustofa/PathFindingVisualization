@@ -13,6 +13,7 @@ namespace PathFindingVisualizing {
 
 		public List<Node> bestPath;
 		public List<Node> searchPath = new List<Node>();
+		private HashSet<Node> searched = new HashSet<Node>();
 
 		public PathPlanner(int[,] grid, int[,] waypoints, Tuple<Position, Position> startAndGoalPos) {
 			this.grid = grid;
@@ -24,14 +25,14 @@ namespace PathFindingVisualizing {
 				g = 0,
 				h = Heuristic(startAndGoalPos.Item1.row, startAndGoalPos.Item1.col)
 			};
-
 		}
 
 		public List<Node> FindBestPath() {
 			var nextNodes = new SortedSet<Node>();
-			var visitedNodes = new HashSet<Node>();
+			var bestTimes = new Dictionary<Node, int>();
 
 			nextNodes.Add(start);
+			bestTimes[start] = 0;
 
 			while(nextNodes.Count > 0) {
 				var current = nextNodes.First();
@@ -42,27 +43,29 @@ namespace PathFindingVisualizing {
 					bestPath = RetracePath(current);
 					return bestPath;
 				}
-				if(!visitedNodes.Add(current)) {
-					continue;
-				}
-				searchPath.Add(current);
 
 				var currentNeighbors = GetNeighbors(current);
 				foreach(var neighbor in currentNeighbors) {
-					int newMask = current.waypointMask;
+					int newG = current.g + grid[neighbor.row, neighbor.col];
 
-					// Checks if position is a necessary waypoint
-					if(waypoints[neighbor.row, neighbor.col] != -1) {
-						newMask |= (1 << waypoints[neighbor.row, neighbor.col]);
-					}
+					// Checks if a better path was previously found
+					if(!bestTimes.TryGetValue(neighbor, out int prevG) || newG < prevG) {
+						int newMask = current.waypointMask;
 
-					neighbor.g = current.g + grid[neighbor.row, neighbor.col];
-					neighbor.h = Heuristic(neighbor.row, neighbor.col);
-					neighbor.waypointMask = newMask;
-					neighbor.parent = current;
+						// Checks if position is a necessary waypoint
+						if(waypoints[neighbor.row, neighbor.col] != -1) {
+							newMask |= (1 << waypoints[neighbor.row, neighbor.col]);
+						}
+						neighbor.g = newG;
+						neighbor.h = Heuristic(neighbor.row, neighbor.col);
+						neighbor.waypointMask = newMask;
+						neighbor.parent = current;
 
-					nextNodes.Add(neighbor);
-				}
+						bestTimes[neighbor] = newG;
+						nextNodes.Add(neighbor);
+                        searchPath.Add(current);
+                    }
+                }
 			}
 
 			return null;
