@@ -25,7 +25,8 @@
             <TextBlock Text="Informações" FontSize="40" FontWeight="Bold" Margin="0 5 0 0" TextAlignment="Center"/>
             <Button Name="customMapBtn" Content="Personalizar Mapa" FontSize="28" Width="250" Margin="0 20 0 0 " VerticalAlignment="Bottom" Click="CustomMapClick"/>
             <Button Name="startBtn" Content="Iniciar" FontSize="28" Width="100" Margin="20" VerticalAlignment="Bottom" Click="StartClick"/>
-            <StackPanel Name="searchPanel" Orientation="Vertical" Visibility="Visible">
+            <CheckBox Name="alternativeBox" Content="Usar Algoritmo Alternativo" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Bottom" Visibility="Collapsed"/>
+            <StackPanel Name="searchPanel" Orientation="Vertical" Visibility="Hidden">
                 <Line Stretch="Fill" Stroke="Black" X2="1" Margin="5 10"/>
                 <TextBlock Text="Dados da Busca" FontSize="32" FontWeight="Bold" Margin="5" TextAlignment="Center"/>
                 <StackPanel Orientation="Horizontal" Margin="10 0">
@@ -46,7 +47,7 @@
                     <Button Name="pauseSearchBtn" Content="Pausar Busca" FontSize="28" Padding="5"  Margin="5" VerticalAlignment="Bottom" Click="PauseStepsClick" Visibility="Collapsed"/>
                 </StackPanel>
             </StackPanel>
-            <StackPanel Name="resultsPanel" Orientation="Vertical" Visibility="Visible">
+            <StackPanel Name="resultsPanel" Orientation="Vertical" Visibility="Hidden">
                 <Line Stretch="Fill" Stroke="Black" X2="1" Margin="5 20"/>
                 <TextBlock Text="Melhor Caminho" FontSize="32" FontWeight="Bold" TextAlignment="Center"/>
                 <StackPanel Orientation="Horizontal" Margin="10 " HorizontalAlignment="Center">
@@ -70,13 +71,14 @@
             
         </StackPanel>
         <StackPanel Name="customMapStack" Visibility="Hidden" Grid.Column="1" Margin="5" Orientation="Vertical">
-            <TextBlock Text="Paleta de Cores" FontSize="38" FontWeight="Bold" Margin="0 20 0 10" TextAlignment="Center"/>
-            <UniformGrid Rows="2" Columns="3" Margin="10" HorizontalAlignment="Center">
-                <Button Background="SaddleBrown" Tag="M" Width="50" Height="50" Margin="5"  Click="PaletteColorClick"/>
-                <Button Background="LightGray" Tag="P" Width="50" Height="50" Margin="5"  Click="PaletteColorClick"/>
-                <Button Background="Gray" Tag="R" Width="50" Height="50" Margin="5"  Click="PaletteColorClick"/>
+            <TextBlock Text="Paleta de Terrenos" FontSize="38" FontWeight="Bold" Margin="0 20 0 10" TextAlignment="Center"/>
+            <UniformGrid Rows="1" Columns="3" Margin="10" HorizontalAlignment="Center">
+                <Button Background="LightGray" ToolTip="Plano (Peso 1)" Tag="P" Width="50" Height="50" Margin="5"  Click="PaletteColorClick"/>
+                <Button Background="Gray" ToolTip="Rochoso (Peso 5)" Tag="R" Width="50" Height="50" Margin="5"  Click="PaletteColorClick"/>
+                <Button Background="SaddleBrown" ToolTip="Montanha (Peso 200)" Tag="M" Width="50" Height="50" Margin="5" Click="PaletteColorClick"/>
             </UniformGrid>
             
+            <Button Name="resetCustomMap" Content="Resetar" FontSize="28" Width="130" Margin="10" VerticalAlignment="Bottom" Click="ResetCustomMap"/>
             <Button Name="confirmCustomMapBtn" Content="Confirmar" FontSize="28" Width="150" Margin="10" VerticalAlignment="Bottom" Click="ConfirmCustomMapClick"/>
         </StackPanel>
     </Grid>

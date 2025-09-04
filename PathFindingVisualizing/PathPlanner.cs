@@ -22,62 +22,83 @@ namespace PathFindingVisualizing {
 			};
 			start = new Node(startAndGoalPos.Item1.row, startAndGoalPos.Item1.col) { 
 				g = 0,
-				h = Heuristic(startAndGoalPos.Item1.row, startAndGoalPos.Item1.col)
+				h = Heuristic(startAndGoalPos.Item1.row, startAndGoalPos.Item1.col, 0)
 			};
 
 		}
 
 		public List<Node> FindBestPath() {
+			int maskCount = 1 << 12;
+			int[,,] gScore = new int[42, 42, maskCount];
+
+			for(int r = 0; r < 42; r++)
+				for(int c = 0; c < 42; c++)
+					for(int m = 0; m < maskCount; m++)
+						gScore[r, c, m] = int.MaxValue;
+
+			gScore[start.row, start.col, start.waypointMask] = 0;
+
 			var nextNodes = new SortedSet<Node>();
-			var visitedNodes = new HashSet<Node>();
+			searchPath = new List<Node>();
+			var firstVisited = new HashSet<(int, int)>();
 
 			nextNodes.Add(start);
 
 			while(nextNodes.Count > 0) {
-				var current = nextNodes.First();
-
+				var current = nextNodes.Min;
 				nextNodes.Remove(current);
 
-				if(current.Equals(goal)) {
+				var posKey = (current.row, current.col);
+				if(!firstVisited.Contains(posKey)) {
+					firstVisited.Add(posKey);
+					searchPath.Add(current);
+				}
+
+				if(current.row == goal.row && current.col == goal.col &&
+					current.waypointMask == goal.waypointMask) {
 					bestPath = RetracePath(current);
 					return bestPath;
 				}
-				if(!visitedNodes.Add(current)) {
-					continue;
-				}
-				searchPath.Add(current);
 
-				var currentNeighbors = GetNeighbors(current);
-				foreach(var neighbor in currentNeighbors) {
+				foreach(var (dr, dc) in Directions) {
+					int nr = current.row + dr;
+					int nc = current.col + dc;
+
+					if(nr < 0 || nc < 0 || nr >= 42 || nc >= 42) continue;
+
 					int newMask = current.waypointMask;
-
-					// Checks if position is a necessary waypoint
-					if(waypoints[neighbor.row, neighbor.col] != -1) {
-						newMask |= (1 << waypoints[neighbor.row, neighbor.col]);
+					if(waypoints[nr, nc] != -1) {
+						newMask |= (1 << waypoints[nr, nc]);
 					}
 
-					neighbor.g = current.g + grid[neighbor.row, neighbor.col];
-					neighbor.h = Heuristic(neighbor.row, neighbor.col);
-					neighbor.waypointMask = newMask;
-					neighbor.parent = current;
+					int tentativeG = current.g + grid[nr, nc];
 
-					nextNodes.Add(neighbor);
+					if(tentativeG < gScore[nr, nc, newMask]) {
+						gScore[nr, nc, newMask] = tentativeG;
+
+						var neighbor = new Node(nr, nc) {
+							g = tentativeG,
+							h = Heuristic(nr, nc, newMask),
+							waypointMask = newMask,
+							parent = current
+						};
+
+						nextNodes.Add(neighbor);
+					}
 				}
 			}
 
 			return null;
 		}
 
-		private List<Node> GetNeighbors(Node current) {
-			var neighbors = new List<Node>();
+		private IEnumerable<(int row, int col)> GetNeighbors(Node current) {
 			foreach(var (drow, dcol) in Directions) {
 				int row = current.row + drow;
 				int col = current.col + dcol;
 				if(row >= 0 && col >= 0 && row < 42 && col < 42) {  
-					neighbors.Add(new Node(row, col));
+					yield return (row, col);
 				}
 			}
-			return neighbors;
 		}
 
 		private List<Node> RetracePath(Node current) {
@@ -105,15 +126,23 @@ namespace PathFindingVisualizing {
 			return bestPath[bestPath.Count - 1].g;
 		}
 
-		private int Heuristic(int row, int col) {
-			return GoalHeuristic(row, col);
+		private int Heuristic(int row, int col, int mask) {
+			return WaypointHeuristic(row, col, mask);
 		}
 
-		private int WaypointHeuristic(int row, int col) {
+		private int WaypointHeuristic(int row, int col, int waypointMask) {
 			int bestDist = int.MaxValue;
+
 			for(int i = 0; i < 12; i++) {
-				bestDist = Math.Min(bestDist, Math.Abs(waypoints[i,0] - row) + Math.Abs(waypoints[i,1] - col));
+				if((waypointMask & (1 << i)) != 0) continue;
+
+				bestDist = Math.Min(bestDist, Math.Abs(waypoints[i,0] - row) + Math.Abs(waypoints[i,1] - col) + Math.Abs(goal.row - waypoints[i, 0]) + Math.Abs(goal.row - waypoints[i, 1]));
 			}
+
+			if(bestDist == int.MaxValue) {
+				return GoalHeuristic(row, col);
+			}
+			
 			return bestDist;
 		}
 
@@ -134,7 +163,51 @@ namespace PathFindingVisualizing {
 			}
 		}
 
-        private static readonly (int dr, int dc)[] Directions = new (int, int)[] {
+		public List<Node> FindBestPathAlternative() {
+			var nextNodes = new SortedSet<Node>();
+			var visitedNodes = new HashSet<Node>();
+
+			nextNodes.Add(start);
+
+			while(nextNodes.Count > 0) {
+				var current = nextNodes.First();
+
+				nextNodes.Remove(current);
+
+				if(!visitedNodes.Add(current)) {
+					continue;
+				}
+				searchPath.Add(current);
+
+				if(current.Equals(goal)) {
+					bestPath = RetracePath(current);
+					return bestPath;
+				}
+
+				foreach(var (row, col) in GetNeighbors(current)) {
+					int newMask = current.waypointMask;
+
+					// Checks if position is a necessary waypoint
+					if(waypoints[row, col] != -1) {
+						newMask |= (1 << waypoints[row, col]);
+					}
+
+					var neighbor = new Node(row, col) {
+						g = current.g + grid[row, col],
+						h = Heuristic(row, col, newMask),
+						waypointMask = newMask,
+						parent = current
+					};
+
+					nextNodes.Add(neighbor);
+				}
+			}
+
+			return null;
+		}
+
+
+		private static readonly (int dr, int dc)[] Directions = new (int, int)[] {
 			(0, 1), 
 			(0, -1),
 			(1, 0), 

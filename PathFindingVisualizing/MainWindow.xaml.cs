@@ -58,7 +58,7 @@ namespace PathFindingVisualizing {
 
 			pathPlanner = new PathPlanner(weightGrid, gridMapper.battles, startAndEndPos);
 			stopwatch = Stopwatch.StartNew();
-			bestPath = pathPlanner.FindBestPath();
+			bestPath = alternativeBox.IsChecked.Value ? pathPlanner.FindBestPathAlternative() : pathPlanner.FindBestPath();
 			totalTime += stopwatch.ElapsedMilliseconds;
 			int bestTime = pathPlanner.GetPathTime();
 			bestTimeTxt.Text = bestTime.ToString();
@@ -125,7 +125,7 @@ namespace PathFindingVisualizing {
 			for(int i = 0; i < searchPath.Count; i++) {
 				if(pauseSteps) break;
 				gridMapper.DrawStep(searchPath, Brushes.Red);
-				await Task.Delay(1);
+				await Task.Delay(5);
 			}
 			pauseSteps = false;
 			playSearchBtn.Visibility = Visibility.Visible;
@@ -152,6 +152,12 @@ namespace PathFindingVisualizing {
 		private void ResetPath() {
 			gridMapper.ResetPath();
 			currentTimeTxt.Text = "0";
+		}
+
+		private void ResetCustomMap(object sender, RoutedEventArgs e) {
+			ResetPath();
+			grid = MapLoader.LoadMap();
+			gridMapper.DrawGrid(grid);
 		}
 
 		private void CustomMapClick(object sender, RoutedEventArgs e) {
